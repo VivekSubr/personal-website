@@ -1,0 +1,14 @@
+{
+  "name": "personal-website",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Personal website: React+TS frontend, Rust (Axum) backend, deployable to Vercel.",
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:server": "cargo run -p personal-website-server",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:server": "cargo build --release -p personal-website-server",
+    "build": "npm run build:frontend && npm run build:server",
+    "start": "STATIC_DIR=frontend/dist cargo run --release -p personal-website-server"
+  }
+}
