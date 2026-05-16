@@ -1,7 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import githubMark from './assets/github-mark.svg'
+import PersonalDetailsPage from './PersonalDetailsPage'
 import profilePic from './assets/profile_pic.png'
 import resumePdf from './assets/Resume.pdf'
 import './App.css'
+
+type Route = 'home' | 'personal-details'
 
 type Experience = {
   year: string
@@ -19,7 +23,7 @@ type Education = {
 
 type Skill = { name: string; desc: string }
 
-type Work = { title: string; year: string; img: string }
+type Work = { title: string; year?: string; img: string; link?: string }
 
 const EXPERIENCE: Experience[] = [
   {
@@ -62,31 +66,48 @@ const EDUCATION: Education[] = [
 ]
 
 const PRO_SKILLS: Skill[] = [
-  { name: 'Systems Programming', desc: '' },
-  { name: 'Distributed Systems', desc: '' },
-  { name: 'AI Productivity', desc: '' },
+  { name: 'Systems Programming', desc: 'Written many utilities, like db clients, network libraries for load balancing, DNS, circuit breaking, observability ect' },
+  { name: 'Distributed Systems', desc: 'Architected and deployed large scale production Kubernetes clusters for AT&T' },
+  { name: 'AI Productivity', desc: 'Working at Microsoft, had extensive exposure to AI driven workflows with Copilot and Agency' },
 ]
 
 const LANGUAGES: Skill[] = [
-  { name: 'C++', desc: 'Backend services, APIs, and systems-side implementation.' },
-  { name: 'Golang', desc: 'Frontend interfaces and strongly typed application code.' },
-  { name: 'Rust', desc: 'Frontend interfaces and strongly typed application code.' },
-  { name: 'Linux / Bash / Git', desc: 'Tooling, automation, and day-to-day engineering workflow.' },
+  { name: 'C++', desc: 'Have extensive experience with C++ - have worked in UI (MFC, Qt), Routers, Embedded, Cloud Native 5g using C++' },
+  { name: 'Golang', desc: 'Used golang for cloud native services, kubernetes operators' },
+  { name: 'Rust', desc: 'Used rust for systems programming in 5g project - envoy dynamic modules, networking components' },
+  { name: 'Linux / Bash / Git', desc: 'Bread and butter, always been a linux person' },
 ]
 
 const WORKS: Work[] = [
   {
-    title: 'Rust API Starter',
-    year: '2026',
-    img: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=800&q=80',
+    title: 'Personal Github',
+    img: githubMark,
+    link: 'https://github.com/VivekSubr',
   }
 ]
 
+function getRouteFromHash(): Route {
+  return window.location.hash === '#/personal-details' ? 'personal-details' : 'home'
+}
+
 function App() {
+  const [route, setRoute] = useState<Route>(getRouteFromHash)
+
+  useEffect(() => {
+    const onHashChange = () => setRoute(getRouteFromHash())
+    window.addEventListener('hashchange', onHashChange)
+
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [])
+
   useEffect(() => {
     fetch('/api/health')
       .catch(() => undefined)
   }, [])
+
+  if (route === 'personal-details') {
+    return <PersonalDetailsPage onBackHref="#/" />
+  }
 
   return (
     <main>
@@ -110,12 +131,16 @@ function App() {
       {/* ─────── About ─────── */}
       <section className="section about">
         <div className="about__text">
-          <h2>About Me (he/him)</h2>
+          <h2>About Me </h2>
           <p>
             I am a systems-focused software engineer who enjoys building reliable backend services,
-            developer tooling, and clean deployment workflows. I like working close to the runtime:
-            thinking about failure modes, latency, infrastructure boundaries, and the ergonomics of
-            shipping software that is easy to operate.
+            developer tooling, and clean deployment workflows. 
+
+            I have experience in systems software for cloud native service, networking, observability and 
+            have worked on large scale kubernetes clusters.
+
+            Also have experience with AI driven development - case is point this website, I am not a web developer 
+            at all, its all AI. :)
           </p>
         </div>
         <div className="about__photo">
@@ -124,6 +149,12 @@ function App() {
             alt="Workspace with a laptop"
           />
         </div>
+      </section>
+
+      <section className="section section--compact">
+        <a className="details-link" href="#/personal-details">
+          More personal details
+        </a>
       </section>
 
       {/* ─────── Relevant Experience ─────── */}
@@ -199,11 +230,27 @@ function App() {
         <div className="works__grid">
           {WORKS.map((w) => (
             <article key={w.title}>
-              <div className="work__img">
-                <img src={w.img} alt={w.title} loading="lazy" />
-              </div>
-              <h3 className="work__title">{w.title}</h3>
-              <p className="work__year">{w.year}</p>
+              {w.link ? (
+                <a href={w.link} target="_blank" rel="noreferrer" aria-label={w.title}>
+                  <div className="work__img">
+                    <img src={w.img} alt={w.title} loading="lazy" />
+                  </div>
+                </a>
+              ) : (
+                <div className="work__img">
+                  <img src={w.img} alt={w.title} loading="lazy" />
+                </div>
+              )}
+              <h3 className="work__title">
+                {w.link ? (
+                  <a href={w.link} target="_blank" rel="noreferrer">
+                    {w.title}
+                  </a>
+                ) : (
+                  w.title
+                )}
+              </h3>
+              {w.year ? <p className="work__year">{w.year}</p> : null}
             </article>
           ))}
         </div>
@@ -215,9 +262,9 @@ function App() {
           <h2 className="connect__title">Connect with me</h2>
           <p className="connect__name">Vivek Subramanian</p>
           <div className="connect__contact">
-            <p>Available for backend, systems, and tooling work.</p>
-            <p>Rust, TypeScript, Linux, and developer infrastructure.</p>
-            <p>Replace this block with your preferred email, GitHub, and LinkedIn.</p>
+            <p>Available for systems software, cloud native services, networking and observability developement.</p>
+            <p>C++, Golang, Linux, and developer infrastructure.</p>
+            <p>Email: tzar123@gmail.com</p>
           </div>
           <a className="connect__resume" href={resumePdf} download="Vivek_Subramanian_Resume.pdf">
             Download resume
@@ -225,24 +272,24 @@ function App() {
           <div className="connect__follow">
             <p>Find me on</p>
             <div className="connect__socials">
-              <a href="#" aria-label="Instagram">
+              <a
+                href="https://www.instagram.com/subramanianvivek"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+              >
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.43.36 1.06.41 2.23.07 1.25.07 1.65.07 4.85s0 3.6-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.25.07-1.65.07-4.85.07s-3.6 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.43-.36-1.06-.41-2.23C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.4 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.15 0-3.52 0-4.76.06-1.07.05-1.65.23-2.04.38-.51.2-.88.44-1.27.83-.39.39-.63.76-.83 1.27-.15.39-.33.97-.38 2.04C2.66 8.48 2.65 8.85 2.65 12s0 3.52.06 4.76c.05 1.07.23 1.65.38 2.04.2.51.44.88.83 1.27.39.39.76.63 1.27.83.39.15.97.33 2.04.38 1.24.06 1.61.06 4.76.06s3.52 0 4.76-.06c1.07-.05 1.65-.23 2.04-.38.51-.2.88-.44 1.27-.83.39-.39.63-.76.83-1.27.15-.39.33-.97.38-2.04.06-1.24.06-1.61.06-4.76s0-3.52-.06-4.76c-.05-1.07-.23-1.65-.38-2.04a3.4 3.4 0 0 0-.83-1.27 3.4 3.4 0 0 0-1.27-.83c-.39-.15-.97-.33-2.04-.38C15.52 4 15.15 4 12 4Zm0 3.05a4.95 4.95 0 1 1 0 9.9 4.95 4.95 0 0 1 0-9.9Zm0 1.8a3.15 3.15 0 1 0 0 6.3 3.15 3.15 0 0 0 0-6.3Zm5.16-2.16a1.16 1.16 0 1 1 0 2.32 1.16 1.16 0 0 1 0-2.32Z" />
                 </svg>
               </a>
-              <a href="#" aria-label="LinkedIn">
+              <a
+                href="https://www.linkedin.com/in/vivek-subru/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="LinkedIn"
+              >
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5.001 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.84v1.64h.05c.53-1 1.84-2.04 3.78-2.04 4.04 0 4.78 2.66 4.78 6.12V21h-4v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.07 1.4-2.07 2.86V21h-4V9Z" />
-                </svg>
-              </a>
-              <a href="#" aria-label="Facebook">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.45 2.89h-2.33v6.99A10 10 0 0 0 22 12Z" />
-                </svg>
-              </a>
-              <a href="#" aria-label="Twitter">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M22 5.92c-.74.33-1.53.55-2.36.65a4.1 4.1 0 0 0 1.8-2.27 8.2 8.2 0 0 1-2.6.99 4.1 4.1 0 0 0-7 3.74A11.65 11.65 0 0 1 3.4 4.86a4.1 4.1 0 0 0 1.27 5.47 4.07 4.07 0 0 1-1.86-.51v.05a4.1 4.1 0 0 0 3.29 4.02 4.1 4.1 0 0 1-1.85.07 4.1 4.1 0 0 0 3.83 2.85A8.23 8.23 0 0 1 2 18.55a11.6 11.6 0 0 0 6.29 1.84c7.55 0 11.68-6.25 11.68-11.67 0-.18 0-.35-.01-.53A8.34 8.34 0 0 0 22 5.92Z" />
                 </svg>
               </a>
             </div>

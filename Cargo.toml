@@ -1,6 +1,3 @@
 [workspace]
-# Vercel's vercel-rust builder manages each api/*.rs independently at deploy
-# time, so api/ is excluded from this local workspace.
 resolver = "2"
-members = ["server"]
-exclude = ["api"]
+members = ["server", "api"]
