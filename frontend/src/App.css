@@ -530,3 +530,323 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ───────────── Passions (glossy full-screen scroll pages) ───────────── */
+
+.passions {
+  background: #000;
+  color: #fff;
+  scroll-snap-type: y mandatory;
+  overflow-y: auto;
+  height: 100vh;
+  position: relative;
+}
+
+/* ── Intro hero (first snap page, cream background) ── */
+
+.passions__intro {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  scroll-snap-align: start;
+  background: var(--cream, #f3ecdf);
+  color: var(--ink, #111);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+}
+
+.passions__intro-inner {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(40px, 8vw, 120px);
+  display: grid;
+  gap: 24px;
+  justify-items: start;
+}
+
+.passions__intro-inner .hero__cta {
+  margin-top: 12px;
+}
+
+.passions__intro-cue {
+  margin-top: 40px;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted, #666);
+}
+
+.passions__back {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 10;
+  padding: 10px 18px;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.passions__back:hover {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+}
+
+.passion {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  scroll-snap-align: start;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  isolation: isolate;
+  background: #0a0a0a;
+}
+
+/* ── Image mosaic (auto-arranged by count) ── */
+
+.passion__mosaic {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  gap: 4px;
+  z-index: 0;
+}
+
+.passion__tile {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+  transform: scale(1.001); /* avoid hairline gaps */
+  transition: transform 8s ease-out;
+}
+
+.passion:hover .passion__tile {
+  transform: scale(1.04);
+}
+
+.mosaic--1 {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+.mosaic--2 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+
+/* 3 images: one large + two stacked */
+.mosaic--3 {
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.mosaic--3 .passion__tile:nth-child(1) {
+  grid-row: 1 / span 2;
+  grid-column: 1;
+}
+.mosaic--3 .passion__tile:nth-child(2) {
+  grid-column: 2;
+  grid-row: 1;
+}
+.mosaic--3 .passion__tile:nth-child(3) {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* When the section is right-aligned, mirror the 3-image mosaic */
+.passion--right .mosaic--3 {
+  grid-template-columns: 1fr 2fr;
+}
+.passion--right .mosaic--3 .passion__tile:nth-child(1) {
+  grid-column: 2;
+}
+.passion--right .mosaic--3 .passion__tile:nth-child(2),
+.passion--right .mosaic--3 .passion__tile:nth-child(3) {
+  grid-column: 1;
+}
+
+.mosaic--4 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+/* 5+ images: responsive auto-fill grid */
+.mosaic--many {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-auto-rows: 1fr;
+}
+
+.passion__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.55) 0%,
+      rgba(0, 0, 0, 0.25) 35%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+  z-index: 2;
+}
+
+.passion__sheen {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 20% 10%,
+      rgba(255, 255, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0) 45%
+    ),
+    radial-gradient(
+      ellipse at 85% 90%,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0) 50%
+    );
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: screen;
+}
+
+.passion__content {
+  position: relative;
+  z-index: 4;
+  padding: clamp(40px, 8vw, 120px);
+  max-width: 720px;
+  color: #fff;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55);
+}
+
+.passion--left .passion__content {
+  margin-right: auto;
+}
+
+.passion--right .passion__content {
+  margin-left: auto;
+  text-align: right;
+}
+
+.passion--center .passion__content {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.passion__eyebrow {
+  margin: 0 0 18px;
+  font-size: 13px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.passion__title {
+  margin: 0 0 24px;
+  font-weight: 500;
+  font-size: clamp(64px, 11vw, 160px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #ffffff 55%,
+    rgba(255, 255, 255, 0.65) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.45));
+}
+
+.passion__blurb {
+  margin: 0;
+  font-size: clamp(16px, 1.4vw, 20px);
+  line-height: 1.55;
+  max-width: 52ch;
+  opacity: 0.95;
+}
+
+.passion--right .passion__blurb {
+  margin-left: auto;
+}
+
+.passion__link {
+  display: inline-block;
+  margin-top: 28px;
+  padding: 12px 26px;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.passion__link:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.passion--right .passion__link {
+  margin-left: auto;
+}
+
+.passion__scroll-cue {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  animation: passionBob 2.4s ease-in-out infinite;
+}
+
+@keyframes passionBob {
+  0%, 100% { transform: translate(-50%, 0); opacity: 0.7; }
+  50% { transform: translate(-50%, 8px); opacity: 1; }
+}
+
+@media (max-width: 720px) {
+  .passion--right .passion__content,
+  .passion--left .passion__content {
+    margin: 0;
+    text-align: left;
+  }
+  .passion--right .passion__blurb {
+    margin-left: 0;
+  }
+
+  /* Collapse multi-image mosaics into a single stacked column on mobile */
+  .passion__mosaic.mosaic--2,
+  .passion__mosaic.mosaic--3,
+  .passion__mosaic.mosaic--4 {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(var(--rows, 2), 1fr);
+  }
+  .passion__mosaic.mosaic--3 .passion__tile:nth-child(1),
+  .passion__mosaic.mosaic--3 .passion__tile:nth-child(2),
+  .passion__mosaic.mosaic--3 .passion__tile:nth-child(3) {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}

@@ -31,7 +31,7 @@ const EXPERIENCE: Experience[] = [
     role: 'Systems Software Engineer',
     org: 'Microsoft Azure, A4O',
     desc:
-      'Work on PaaS team for Unity Cloud, a cloud-native virtual network function product. Mostly worked on networking and observability agents - service mesh agents for load balancing, DNS and circuit breaking, opentelemetryagents for metrics and tracing, and client forredis database. Link: https://azure.microsoft.com/en-us/products/private-5g-core',
+      'Work on PaaS team for Unity Cloud, a cloud-native virtual network function product. Mostly worked on networking and observability agents - service mesh agents for load balancing, DNS and circuit breaking, opentelemetryagents for metrics and tracing, and client for redis.',
   },
   {
     year: '2019',
@@ -153,7 +153,7 @@ function App() {
 
       <section className="section section--compact">
         <a className="details-link" href="#/personal-details">
-          More personal details
+          If you want to know more - more personal details
         </a>
       </section>
 
